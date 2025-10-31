@@ -54,7 +54,10 @@ module tc_clk_gating #(
 
   if (IS_FUNCTIONAL) begin : gen_functional
     BUFGCE #(
-      .SIM_DEVICE ( SIM_DEVICE )
+      .CE_TYPE        ( "SYNC"     ),
+      .IS_CE_INVERTED ( 1'b0       ),
+      .IS_I_INVERTED  ( 1'b0       ),
+      .SIM_DEVICE     ( SIM_DEVICE )
     ) i_clk_gate (
       .I  ( clk_i            ),
       .CE ( en_i | test_en_i ),
@@ -110,5 +113,3 @@ module tc_clk_or2 (
   assign clk_o = clk0_i | clk1_i;
 
 endmodule
-
-
