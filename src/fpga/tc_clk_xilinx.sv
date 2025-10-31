@@ -45,10 +45,9 @@ module tc_clk_gating #(
 
   if (IS_FUNCTIONAL) begin : gen_functional
     BUFGCE #(
-      .CE_TYPE        ( "SYNC"       ),
-      .IS_CE_INVERTED ( 1'b0         ),
-      .IS_I_INVERTED  ( 1'b0         ),
-      .SIM_DEVICE     ( "ULTRASCALE" )
+      .CE_TYPE        ( "SYNC" ),
+      .IS_CE_INVERTED ( 1'b0   ),
+      .IS_I_INVERTED  ( 1'b0   )
     ) i_clk_gate (
       .I  ( clk_i ),
       .CE ( en_i  ),
