@@ -49,12 +49,14 @@ module tc_clk_gating #(
    output logic clk_o
 );
 
+  localparam string SIM_DEVICE = `XILINX_SIM_DEVICE;
+
   if (IS_FUNCTIONAL) begin : gen_functional
     BUFGCE #(
-      .CE_TYPE        ( "SYNC"             ),
-      .IS_CE_INVERTED ( 1'b0               ),
-      .IS_I_INVERTED  ( 1'b0               ),
-      .SIM_DEVICE     ( `XILINX_SIM_DEVICE )
+      .CE_TYPE        ( "SYNC"     ),
+      .IS_CE_INVERTED ( 1'b0       ),
+      .IS_I_INVERTED  ( 1'b0       ),
+      .SIM_DEVICE     ( SIM_DEVICE )
     ) i_clk_gate (
       .I  ( clk_i ),
       .CE ( en_i  ),
