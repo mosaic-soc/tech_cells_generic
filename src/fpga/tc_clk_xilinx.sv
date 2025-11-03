@@ -10,6 +10,12 @@
 
 // Cells to be used for Xilinx FPGA mappings
 
+// Some primitives require a `SIM_DEVICE` parameter, which can be overwritten
+// with this define
+`ifndef XILINX_SIM_DEVICE
+`define XILINX_SIM_DEVICE "ULTRASCALE"
+`endif
+
 module tc_clk_and2 (
   input  logic clk0_i,
   input  logic clk1_i,
@@ -45,9 +51,10 @@ module tc_clk_gating #(
 
   if (IS_FUNCTIONAL) begin : gen_functional
     BUFGCE #(
-      .CE_TYPE        ( "SYNC" ),
-      .IS_CE_INVERTED ( 1'b0   ),
-      .IS_I_INVERTED  ( 1'b0   )
+      .CE_TYPE        ( "SYNC"             ),
+      .IS_CE_INVERTED ( 1'b0               ),
+      .IS_I_INVERTED  ( 1'b0               ),
+      .SIM_DEVICE     ( `XILINX_SIM_DEVICE )
     ) i_clk_gate (
       .I  ( clk_i ),
       .CE ( en_i  ),
