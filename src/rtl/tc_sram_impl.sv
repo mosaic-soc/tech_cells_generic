@@ -24,15 +24,18 @@
 // - `impl_i`:  Implementation-related inputs
 // - `impl_o`:  Implementation-related outputs
 
-module tc_sram_impl #(
+module tc_sram_impl
+  import tc_sram_pkg::*;
+#(
   parameter int unsigned NumWords     = 32'd1024, // Number of Words in data array
   parameter int unsigned DataWidth    = 32'd128,  // Data signal width
   parameter int unsigned ByteWidth    = 32'd8,    // Width of a data byte
   parameter int unsigned NumPorts     = 32'd2,    // Number of read and write ports
   parameter int unsigned Latency      = 32'd1,    // Latency when the read data is available
-  parameter              SimInit      = "none",   // Simulation initialization
+  parameter sim_init_e   SimInit      = INIT_NONE,// Simulation initialization
   parameter bit          PrintSimCfg  = 1'b0,     // Print configuration
-  parameter              ImplKey      = "none",   // Reference to specific implementation
+  parameter type         ImplKeyType  = string,   // Type of the 'ImplKey' parameter
+  parameter ImplKeyType  ImplKey      = "none",   // Reference to specific implementation
   parameter type         impl_in_t    = logic,    // Type for implementation inputs
   parameter type         impl_out_t   = logic,    // Type for implementation outputs
   parameter impl_out_t   ImplOutSim   = 'X,       // Implementation output in simulation
@@ -69,6 +72,7 @@ module tc_sram_impl #(
   .Latency      ( Latency     ),
   .SimInit      ( SimInit     ),
   .PrintSimCfg  ( PrintSimCfg ),
+  .ImplKeyType  ( ImplKeyType ),
   .ImplKey      ( ImplKey     )
   ) i_tc_sram (
     .clk_i,

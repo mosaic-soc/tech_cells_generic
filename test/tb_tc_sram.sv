@@ -11,14 +11,16 @@
 // Author: Wolfgang Roenninger <wroennin@ethz.ch>, ETH Zurich
 // Description: Testbench for the functional `*_sram` modules
 
-module tb_tc_sram #(
+module tb_tc_sram
+  import tc_sram_pkg::*;
+#(
   parameter int unsigned NumPorts  = 32'd2,
   parameter int unsigned Latency   = 32'd1,
   parameter int unsigned NumWords  = 32'd1024,
   parameter int unsigned DataWidth = 32'd64,
   parameter int unsigned ByteWidth = 32'd8,
   parameter int unsigned NoReq     = 32'd200000,
-  parameter string       SimInit   = "zeros",
+  parameter sim_init_e   SimInit   = INIT_ZEROS,
   parameter time         CyclTime  = 10ns,
   parameter time         ApplTime  = 2ns,
   parameter time         TestTime  = 8ns
@@ -119,9 +121,9 @@ module tb_tc_sram #(
     for (int unsigned i = 0; i < NumWords; i++) begin
       for (int unsigned j = 0; j < DataWidth; j++) begin
         case (SimInit)
-          "zeros": memory[i][j] = 1'b0;
-          "ones":  memory[i][j] = 1'b1;
-          default: memory[i][j] = 1'bx;
+          INIT_ZEROS: memory[i][j] = 1'b0;
+          INIT_ONES:  memory[i][j] = 1'b1;
+          default:    memory[i][j] = 1'bx;
         endcase
       end
     end

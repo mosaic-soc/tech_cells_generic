@@ -16,15 +16,18 @@
 //              command. Currently the Xilinx macros are always initialized to all zero!
 //              The behaviour, parameters and ports are described in the header of `rtl/tc_sram.sv`.
 
-module tc_sram #(
-  parameter int unsigned NumWords     = 32'd1024, // Number of Words in data array
-  parameter int unsigned DataWidth    = 32'd128,  // Data signal width (in bits)
-  parameter int unsigned ByteWidth    = 32'd8,    // Width of a data byte (in bits)
-  parameter int unsigned NumPorts     = 32'd2,    // Number of read and write ports
-  parameter int unsigned Latency      = 32'd1,    // Latency when the read data is available
-  parameter              SimInit      = "zeros",  // Simulation initialization, fixed to zero here!
-  parameter bit          PrintSimCfg  = 1'b0,     // Print configuration
-  parameter              ImplKey      = "none",   // Reference to specific implementation
+module tc_sram
+  import tc_sram_pkg::*;
+#(
+  parameter int unsigned NumWords     = 32'd1024,   // Number of Words in data array
+  parameter int unsigned DataWidth    = 32'd128,    // Data signal width (in bits)
+  parameter int unsigned ByteWidth    = 32'd8,      // Width of a data byte (in bits)
+  parameter int unsigned NumPorts     = 32'd2,      // Number of read and write ports
+  parameter int unsigned Latency      = 32'd1,      // Latency when the read data is available
+  parameter sim_init_e   SimInit      = INIT_ZEROS, // Simulation initialization, fixed to zeros here!
+  parameter bit          PrintSimCfg  = 1'b0,       // Print configuration
+  parameter type         ImplKeyType  = string,     // Type of the 'ImplKey' parameter
+  parameter ImplKeyType  ImplKey      = "none",     // Reference to specific implementation
   // DEPENDENT PARAMETERS, DO NOT OVERWRITE!
   parameter int unsigned AddrWidth = (NumWords > 32'd1) ? $clog2(NumWords) : 32'd1,
   parameter int unsigned BeWidth   = (DataWidth + ByteWidth - 32'd1) / ByteWidth, // ceil_div
@@ -180,8 +183,8 @@ module tc_sram #(
 `ifndef VERILATOR
 `ifndef TARGET_SYNTHESIS
   initial begin: p_assertions
-    assert (SimInit == "zeros" || SimInit == "none") else $fatal(1, "The Xilinx `tc_sram` has fixed SimInit: zeros");
-    if (SimInit == "none") $warning("The Xilinx `tc_sram` %m will be initialized with 0 instead of x.");
+    assert (SimInit == INIT_ZEROS || SimInit == INIT_NONE) else $fatal(1, "The Xilinx `tc_sram` has fixed SimInit: zeros");
+    if (SimInit == INIT_NONE) $warning("The Xilinx `tc_sram` %m will be initialized with 0 instead of x.");
     assert ($bits(addr_i)  == NumPorts * AddrWidth) else $fatal(1, "AddrWidth problem on `addr_i`");
     assert ($bits(wdata_i) == NumPorts * DataWidth) else $fatal(1, "DataWidth problem on `wdata_i`");
     assert ($bits(be_i)    == NumPorts * BeWidth)   else $fatal(1, "BeWidth   problem on `be_i`"   );
@@ -203,7 +206,7 @@ module tc_sram #(
       $display("Byte width        (dec): %0d", ByteWidth                                          );
       $display("Byte enable width (dec): %0d", BeWidth                                            );
       $display("Latency Cycles    (dec): %0d", Latency                                            );
-      $display("Simulation init   (str): %0s", SimInit                                            );
+      $display("Simulation init   (str): %0s", sim_init_str(SimInit)                              );
       $display("#################################################################################");
     end
   end

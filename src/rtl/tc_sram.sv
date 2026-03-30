@@ -30,6 +30,9 @@
 //                "none":   Each bit gets initialized with 1'bx. (default)
 // - PrintSimCfg: Prints at the beginning of the simulation a `Hello` message with
 //                the instantiated parameters and signal widths.
+// - ImplKeyType: Type of the 'ImplKey' parameter. Defaults to string for legacy behavior.
+//                It is recommended to use an enum with a synthesizable base type, as strings may
+//                not be supported by all synthesis tools.
 // - ImplKey:     Key by which an instance can refer to a specific implementation (e.g. macro).
 //                May be used to look up additional parameters for implementation (e.g. generator,
 //                line width, muxing) in an external reference, such as a configuration file.
@@ -53,15 +56,18 @@
 //                       `rdata_o` when `req_i` and `we_i` are asserted. The output data is stable
 //                       on write requests.
 
-module tc_sram #(
+module tc_sram
+  import tc_sram_pkg::*;
+#(
   parameter int unsigned NumWords     = 32'd1024, // Number of Words in data array
   parameter int unsigned DataWidth    = 32'd128,  // Data signal width
   parameter int unsigned ByteWidth    = 32'd8,    // Width of a data byte
   parameter int unsigned NumPorts     = 32'd2,    // Number of read and write ports
   parameter int unsigned Latency      = 32'd1,    // Latency when the read data is available
-  parameter              SimInit      = "none",   // Simulation initialization
+  parameter sim_init_e   SimInit      = INIT_NONE,// Simulation initialization
   parameter bit          PrintSimCfg  = 1'b0,     // Print configuration
-  parameter              ImplKey      = "none",   // Reference to specific implementation
+  parameter type         ImplKeyType  = string,   // Type of the 'ImplKey' parameter
+  parameter ImplKeyType  ImplKey      = "none",   // Reference to specific implementation
   // DEPENDENT PARAMETERS, DO NOT OVERWRITE!
   parameter int unsigned AddrWidth = (NumWords > 32'd1) ? $clog2(NumWords) : 32'd1,
   parameter int unsigned BeWidth   = (DataWidth + ByteWidth - 32'd1) / ByteWidth, // ceil_div
@@ -91,10 +97,10 @@ module tc_sram #(
   initial begin : proc_sram_init
     for (int unsigned i = 0; i < NumWords; i++) begin
       case (SimInit)
-        "zeros":  init_val[i] = {DataWidth{1'b0}};
-        "ones":   init_val[i] = {DataWidth{1'b1}};
-        "random": init_val[i] = {DataWidth{$urandom()}};
-        default:  init_val[i] = {DataWidth{1'bx}};
+        INIT_ZEROS:   init_val[i] = {DataWidth{1'b0}};
+        INIT_ONES:    init_val[i] = {DataWidth{1'b1}};
+        INIT_RANDOM:  init_val[i] = {DataWidth{$urandom()}};
+        default:      init_val[i] = {DataWidth{1'bx}};
       endcase
     end
   end
@@ -125,7 +131,7 @@ module tc_sram #(
 
   // In case simulation initialization is disabled (SimInit == 'none'), don't assign to the sram
   // content at all. This improves simulation performance in tools like verilator
-  if (SimInit == "none") begin
+  if (SimInit == INIT_NONE) begin
     // write memory array without initialization
     always_ff @(posedge clk_i or negedge rst_ni) begin
       if (!rst_ni) begin
@@ -228,7 +234,7 @@ module tc_sram #(
       $display("Byte width        (dec): %0d", ByteWidth                                          );
       $display("Byte enable width (dec): %0d", BeWidth                                            );
       $display("Latency Cycles    (dec): %0d", Latency                                            );
-      $display("Simulation init   (str): %0s", SimInit                                            );
+      $display("Simulation init   (str): %0s", sim_init_str(SimInit)                              );
       $display("#################################################################################");
     end
   end
