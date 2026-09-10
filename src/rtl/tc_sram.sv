@@ -87,7 +87,9 @@ module tc_sram #(
 `ifdef SYNTHESIS
   `define TC_GENERIC_SRAM_SYNTHESIS
 `elsif TARGET_SYNTHESIS
-  `define TC_GENERIC_SRAM_SYNTHESIS
+  `ifndef TARGET_SIMULATION
+    `define TC_GENERIC_SRAM_SYNTHESIS
+  `endif
 `endif
 
 `ifndef TC_GENERIC_SRAM_SYNTHESIS
