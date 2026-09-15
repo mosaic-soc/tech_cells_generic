@@ -26,12 +26,15 @@ module tc_sync #(
   (* dont_touch = "true" *)
   (* async_reg  = "true" *)
   logic [Stages-1:0] reg_q;
+  logic [Stages:0] reg_d;
+  
+  assign reg_d = {reg_q, serial_i};
 
   always_ff @(posedge clk_i, negedge rst_ni) begin
     if (!rst_ni) begin
       reg_q <= {Stages{ResetValue}};
     end else begin
-      reg_q <= {reg_q[Stages-2:0], serial_i};
+      reg_q <= reg_d[Stages-1:0];
     end
   end
 
