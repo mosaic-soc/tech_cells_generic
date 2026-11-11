@@ -33,7 +33,12 @@ sources:
       - include
     files:
       # Level 0
-      - src/rtl/tc_io.sv
+      - src/rtl/tc_io/tc_io_pkg.sv
+      - src/rtl/tc_io/tc_generic_io_cell.sv
+      - src/rtl/tc_io/tc_input_cell.sv
+      - src/rtl/tc_io/tc_inout_cell.sv
+      - src/rtl/tc_io/tc_output_cell.sv
+      - src/rtl/tc_io/tc_gpio_cell.sv
 
   - target: all(any(fpga, tech_cells_generic_include_xilinx_xpm), not(tech_cells_generic_exclude_xilinx_xpm))
     files:
