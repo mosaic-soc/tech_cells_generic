@@ -12,7 +12,7 @@ module tc_generic_io_cell import tc_io_pkg::*; #(
   output logic input_o,  // Input signal from the pad to the chip
   input  pad_cfg_t cfg_i,  // Configuration input signals
   input  impl_in_t impl_i,  // Implementation input signals
-  inout  logic inout_io  // Bidirectional IO signal
+  inout  wire inout_io  // Bidirectional IO signal
 );
   assign inout_io = output_enable_i ? output_i : 'z;
   assign input_o = inout_io;
