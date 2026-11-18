@@ -15,4 +15,17 @@ package tc_io_pkg;
   /// Type for the implementation input signals
   typedef logic pad_cfg_t;
   typedef logic impl_in_t;
+  // Technology-independent interface for pad register settings.
+  function automatic pad_cfg_t make_pad_cfg(
+    input logic [3:0] drive_strength,
+    input logic pull_up,
+    input logic pull_down,
+    input logic bus_keeper,
+    input logic slew_rate_control,
+    input logic schmitt_trigger
+  );
+    pad_cfg_t cfg;
+    cfg = '0;
+    return cfg;
+  endfunction
 endpackage
